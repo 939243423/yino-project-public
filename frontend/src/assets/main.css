@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased text-gray-800 bg-white;
+  }
+
+  /* Hide forced line breaks from mobile optimization on PC */
+  @media (min-width: 768px) {
+
+    h1 br,
+    h2 br,
+    h3 br,
+    .section-subtitle br,
+    p br {
+      display: none;
+    }
+
+    /* 特殊处理 */
+    .compliance-text br {
+      display: block !important;
+    }
+  }
+
+  /* Global section title standardization */
+  .section-title {
+    @apply text-3xl font-bold text-gray-900 mb-4;
+  }
+
+  @media (min-width: 768px) {
+    .section-title {
+      font-size: 40px !important;
+      line-height: 1.2;
+    }
+  }
+
+  .section-subtitle {
+    @apply text-gray-500 text-base;
+  }
+
+  @media (min-width: 768px) {
+    .section-subtitle {
+      @apply text-lg;
+    }
+  }
+}
+
+@layer components {
+
+  /* White/Light button */
+  .btn-yino-secondary {
+    @apply inline-block px-8 py-3 bg-white text-gray-800 font-semibold rounded-xl border border-gray-100 hover:bg-gray-50 transition-all duration-300;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  }
+
+  .btn-yino-secondary:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  }
+
+  /* Gold button */
+  .btn-yino-primary {
+    @apply inline-block px-8 py-3 text-white font-semibold rounded-xl transition-all duration-300;
+    background-color: #BCA669;
+    box-shadow: 0 2px 8px rgba(188, 166, 105, 0.25);
+  }
+
+  .btn-yino-primary:hover {
+    background-color: #d4b47a;
+    box-shadow: 0 4px 12px rgba(188, 166, 105, 0.35);
+  }
+}

@@ -1,0 +1,26 @@
+# Common
+node_modules/
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Backend
+backend/node_modules/
+backend/data/*.db
+backend/data/*.db-journal
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/yarn.lock
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.eslintcache
+frontend/yarn.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.log

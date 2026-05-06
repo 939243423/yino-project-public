@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # 前端 + Nginx (二合一)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: yino-project_frontend
+    ports:
+      - "80:80"  # 只有这里占用 80 端口
+    depends_on:
+      - backend
+    restart: always
+
+  # 后端
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: yino-project_backend_1
+    restart: always
+    volumes:
+      - ./backend/data:/usr/src/app/data # 数据库持久化
+      - ./backend/uploads:/usr/src/app/uploads # 上传图片持久化
+    env_file: 
+      - ./backend/.env
