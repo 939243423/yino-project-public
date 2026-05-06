@@ -40,19 +40,19 @@
       <div v-else class="space-y-6">
         <div v-for="(item, index) in news" :key="item.id" 
              @click="goToDetail(item.id)"
-             class="group bg-white flex flex-col md:flex-row shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 overflow-visible">
+             class="group bg-white flex flex-col md:flex-row shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-[#C5A059]/20 overflow-visible">
           
           <!-- Date Column -->
-          <div :class="['relative w-full md:w-40 flex flex-col items-center justify-center py-8 md:py-0 transition-colors duration-300 shrink-0', index === 0 ? 'bg-[#C5A059] text-white' : 'bg-white text-gray-900 group-hover:bg-[#C5A059]/10']">
+          <div class="relative w-full md:w-40 flex flex-col items-center justify-center py-8 md:py-0 bg-white text-gray-900 group-hover:bg-[#C5A059] group-hover:text-white transition-all duration-300 shrink-0">
             <span class="text-4xl md:text-5xl font-bold mb-2">{{ String(new Date(item.created_at).getDate()).padStart(2, '0') }}</span>
             <span class="text-xs md:text-sm font-medium tracking-wider opacity-80">{{ formatYearMonth(item.created_at) }}</span>
-            <!-- Triangle indicator for the first item -->
-            <div v-if="index === 0" class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[12px] border-y-transparent border-l-[12px] border-l-[#C5A059] z-10"></div>
+            <!-- Triangle indicator (Visible on hover for all cards) -->
+            <div class="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[12px] border-y-transparent border-l-[12px] border-l-[#C5A059] z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
 
           <!-- Text Column -->
           <div class="flex-1 p-8 md:p-12 md:pl-12 flex flex-col justify-center">
-            <h3 :class="['text-xl md:text-2xl font-bold mb-4 transition-colors leading-tight', index === 0 ? 'text-[#C5A059]' : 'text-gray-900 group-hover:text-[#C5A059]']">
+            <h3 class="text-xl md:text-2xl font-bold mb-4 text-gray-900 group-hover:text-[#C5A059] transition-colors leading-tight">
               {{ locale === 'zh' ? item.title_zh : item.title_en }}
             </h3>
             <p class="text-gray-500 leading-relaxed line-clamp-2 text-sm md:text-[15px]">
@@ -68,7 +68,7 @@
           <!-- Image Column -->
           <div class="w-full md:w-[400px] h-[240px] shrink-0 p-3 md:p-6">
             <img :src="item.cover_url || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop'" 
-                 class="w-full h-full object-cover transition-transform duration-700 rounded-sm" 
+                 class="w-full h-full object-cover rounded-sm" 
                  alt="News Cover" />
           </div>
         </div>
