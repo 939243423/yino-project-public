@@ -40,7 +40,10 @@
    chmod +x deploy.sh
    ./deploy.sh
    ```
-
+4. **从git上解决权限执行部署脚本**：
+   ```bash
+   git update-index --chmod=+x deploy.sh
+   ```
 ### 部署逻辑解析
 - **前端 (Frontend)**: 基于 `node:22` 镜像自动执行 `npm run build`，编译产物直接移交给内置的 Nginx 容器。
 - **后端 (Backend)**: 基于 Node.js 镜像运行，通过 Docker 内部网络与前端通信。
