@@ -2,9 +2,9 @@
   <div class="bg-white min-h-screen">
     <PageBanner category="about" :title="$t('about.title')" :subtitle="$t('about.subtitle_banner')" />
     
-    <div class="space-y-32">
+    <div class="space-y-12 md:space-y-32">
       <!-- 1. Company Intro (公司简介) -->
-      <section class="relative overflow-hidden bg-white py-16 md:py-32 md:min-h-[700px] w-full flex items-center px-6">
+      <section class="relative overflow-hidden bg-white pt-10 pb-12 md:py-32 md:min-h-[700px] w-full flex items-center px-6">
         <!-- Desktop Background Skyscraper -->
         <div class="hidden md:block absolute inset-0 z-0 pointer-events-none">
           <img :src="about1" class="absolute inset-0 w-full h-full object-cover" alt="Building Background">
@@ -62,7 +62,7 @@
       </section>
 
       <!-- 2. Company History (公司历程) - Constrained to max-w-5xl -->
-      <section class="text-center overflow-hidden max-w-5xl mx-auto px-6 mb-20 md:mb-32">
+      <section class="text-center overflow-hidden max-w-5xl mx-auto px-6 mb-12 md:mb-32">
         <h2 :class="['section-title tracking-widest text-[#1c1c1c] mb-10 md:mb-20', $i18n.locale === 'en' ? 'text-2xl' : 'text-3xl']">{{ $t('about.history.title') }}</h2>
         
         <!-- Desktop View: Carousel -->
@@ -149,7 +149,7 @@
       </section>
 
       <!-- 3. Promise Section (千金一诺) -->
-      <section class="py-16 md:py-24 px-6 max-w-6xl mx-auto text-center">
+      <section class="py-10 md:py-24 px-6 max-w-6xl mx-auto text-center">
         <h2 :class="['section-title tracking-widest text-[#1c1c1c] mb-4', $i18n.locale === 'en' ? 'text-2xl' : 'text-3xl']">{{ $t('about.answer.title') }}</h2>
         <p class="section-subtitle mb-16 px-4 leading-relaxed max-w-2xl mx-auto">{{ $t('about.answer.subtitle') }}</p>
 
@@ -205,7 +205,7 @@
     </div>
 
     <!-- 4. Professional Foundation (专业根基) -->
-    <section class="bg-white pt-32 md:pt-40 pb-16">
+    <section class="bg-white pt-12 md:pt-40 pb-8 md:pb-16">
       <h2 :class="['section-title tracking-[0.3em] text-[#1c1c1c] text-center', $i18n.locale === 'en' ? 'text-2xl' : 'text-3xl']">{{ $t('about.foundation.title') }}</h2>
     </section>
 

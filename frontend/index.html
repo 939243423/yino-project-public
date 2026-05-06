@@ -27,28 +27,28 @@
         height: 48px;
         border: 3px solid #e5e7eb;
         border-radius: 50%;
-        border-top-color: #003366;
-        /* yino-blue */
-        animation: spin 1s ease-in-out infinite;
+        border-top-color: #C5A059;
+        /* yino-gold */
+        animation: spin 1s linear infinite;
         margin-bottom: 16px;
       }
 
       .loader-text {
         color: #6b7280;
         font-size: 14px;
-        letter-spacing: 0.1em;
-        font-weight: 500;
+        letter-spacing: 0.2em;
+        font-weight: bold;
+        text-transform: uppercase;
       }
 
       @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
       }
     </style>
     <div class="initial-loader">
       <div class="loader-ring"></div>
-      <div class="loader-text">YINO ASSET一诺资产</div>
+      <div class="loader-text">YINO ASSET 一诺资产</div>
     </div>
   </div>
   <script type="module" src="/src/main.js"></script>

@@ -2,8 +2,8 @@
   <div class="w-full overflow-x-hidden relative">
 
     <!-- Hero Banner Section with Swiper Carousel -->
-    <section v-if="slides.length > 0" class="relative w-full h-[600px] md:h-auto md:aspect-[1920/660] md:min-h-[480px] bg-gray-900 overflow-hidden">
-      <swiper
+    <section class="relative w-full h-[600px] md:h-auto md:aspect-[1920/660] md:min-h-[480px] bg-[#111827] overflow-hidden">
+      <swiper v-if="slides.length > 0"
         :modules="[Autoplay, Pagination, Navigation]"
         :slides-per-view="1"
         :space-between="0"
@@ -23,9 +23,10 @@
             class="block h-full w-full"
             :class="slide.link ? 'cursor-pointer' : 'cursor-default'"
           >
-            <div class="absolute inset-0 z-0 overflow-hidden">
+            <div class="absolute inset-0 z-0 overflow-hidden bg-[#111827]">
               <img :src="slide.image" 
-                   class="w-full h-full object-cover opacity-100 bg-[#11141D]" 
+                   class="w-full h-full object-cover transition-opacity duration-700" 
+                   :class="slide.isFallback ? 'opacity-40' : 'opacity-100'"
                    :alt="slide.title" />
             </div>
 
@@ -442,6 +443,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import request from '../api/request'
 import { useI18n } from 'vue-i18n'
+import { appState } from '../utils/appState'
 
 const { t, locale } = useI18n()
 import home1 from '../assets/images/home/1.png'
@@ -464,6 +466,7 @@ import homeMap from '../assets/images/home/map.jpg'
 import home17 from '../assets/images/home/17.png'
 import home18 from '../assets/images/home/18.jpg'
 import home19 from '../assets/images/home/19.png'
+import home20 from '../assets/images/home/20.jpg'
 
 // Intersection Observer States for scroll animations
 const statsVisible = ref(false)
@@ -508,10 +511,20 @@ const slides = computed(() => {
           : ''
       ),
       link: b.link || (index === 0 ? '/about' : ''),
-      buttonText: t('common.more')
+      buttonText: t('common.more'),
+      isFallback: false
     }))
   }
-  return []
+  
+  // Fallback slide if API fails or is empty
+  return [{
+    image: home20,
+    title: t('home.banner_title_fallback'),
+    description: t('home.about_intro_fallback'),
+    link: '/about',
+    buttonText: t('common.more'),
+    isFallback: true
+  }]
 })
 
 const apiSlides = ref([])
@@ -524,6 +537,9 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error('Failed to fetch banners', err)
+  } finally {
+    // Crucial: Hide global loader after banners are ready
+    appState.isInitialLoading = false
   }
 })
 

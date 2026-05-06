@@ -1,5 +1,13 @@
 <template>
-  <div class="min-h-screen bg-gray-50 text-gray-900 font-sans">
+  <div class="min-h-screen bg-gray-50 text-gray-900 font-sans relative">
+    <!-- Global Loading Overlay -->
+    <Transition name="fade-fast">
+      <div v-if="appState.isInitialLoading" class="fixed inset-0 z-[9999] bg-[#f9fafb] flex flex-col items-center justify-center">
+        <div class="w-12 h-12 border-[3px] border-gray-200 border-t-[#C5A059] rounded-full animate-spin mb-4"></div>
+        <div class="text-gray-500 text-sm font-bold tracking-[0.2em] uppercase">YINO ASSET 一诺资产</div>
+      </div>
+    </Transition>
+
     <!-- Navbar -->
     <nav v-if="!isAdminRoute" class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.05)] border-b border-gray-100 px-6 md:px-12 py-4 flex justify-between items-center transition-all duration-300">
       <!-- Logo Area -->
@@ -15,10 +23,10 @@
           <!-- Dropdown Parent -->
           <div v-if="link.children" class="relative group flex items-center h-full cursor-pointer">
             <span class="hover:text-yino-gold transition flex items-center space-x-1 py-4"
-              :class="{ 'text-yino-gold border-b-2 border-yino-gold': link.children.some(sub => $route.path === sub.path) }">
+              :class="{ 'text-yino-gold border-b-2 border-yino-gold': link.children.some(sub => route.path === sub.path) }">
               <span>{{ $t(`nav.${link.key}`) }}</span>
               <svg class="w-3 h-3 text-gray-400 group-hover:text-yino-gold transition-transform group-hover:rotate-180" 
-                :class="{ 'text-yino-gold': link.children.some(sub => $route.path === sub.path) }"
+                :class="{ 'text-yino-gold': link.children.some(sub => route.path === sub.path) }"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </span>
             <!-- Dropdown Menu -->
@@ -185,22 +193,22 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GlobalDialog from './components/GlobalDialog.vue'
 import GlobalToast from './components/GlobalToast.vue'
 import logo from './assets/images/logo.svg'
 import logo2 from './assets/images/logo2.png'
-
+import { appState } from './utils/appState'
 
 const route = useRoute()
+const { locale } = useI18n()
+
 // Now safe to use computed because of router.isReady() in main.js
 const isAdminRoute = computed(() => {
   return route.path ? route.path.startsWith('/admin') : false
 })
-
-const { locale } = useI18n()
 
 // Initialize locale from localStorage if available
 if (localStorage.getItem('yino_lang')) {
@@ -212,6 +220,21 @@ const toggleLang = () => {
   locale.value = newLocale
   localStorage.setItem('yino_lang', newLocale)
 }
+
+// Initial app-wide loading timeout to prevent stuck loader
+onMounted(() => {
+  if (route.path !== '/') {
+    // If not on home page, close loader soon
+    setTimeout(() => {
+      appState.isInitialLoading = false
+    }, 800)
+  } else {
+    // Safety timeout for Home page fallback
+    setTimeout(() => {
+      appState.isInitialLoading = false
+    }, 5000)
+  }
+})
 
 const showMobileMenu = ref(false)
 const showServicesMobile = ref(false)
@@ -242,7 +265,7 @@ const navLinks = [
 <style>
 /* Global body background */
 body {
-  background-color: #F8F9FA; /* Slightly lighter gray for modern feel */
+  background-color: #F8F9FA;
 }
 
 /* Drawer Slide Transition */
@@ -266,5 +289,16 @@ body {
 
 .drawer-enter-to .absolute.right-0 {
   transform: translateX(0);
+}
+
+/* Fast Fade for Loader */
+.fade-fast-enter-active,
+.fade-fast-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-fast-enter-from,
+.fade-fast-leave-to {
+  opacity: 0;
 }
 </style>
