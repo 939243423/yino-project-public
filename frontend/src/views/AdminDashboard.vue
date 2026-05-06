@@ -448,7 +448,7 @@
                   <select v-model="selectedNewsId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none bg-white text-sm">
                     <option value="" disabled>请选择目标新闻...</option>
                     <option v-for="n in news" :key="n.id" :value="n.id">
-                      [{{ n.category === 'insight' ? '周报' : '新闻' }}] {{ n.title_zh }}
+                      [{{ n.category === 'insight' ? '洞察' : '新闻' }}] {{ n.title_zh }}
                     </option>
                   </select>
                   <p class="text-[10px] text-gray-400 pl-1 italic">
@@ -731,8 +731,8 @@ const closePreview = () => {
 
 const newsCategories = [
   { label: '全部', value: 'all' },
-  { label: '新闻资讯', value: 'news' },
-  { label: '一诺周报', value: 'insight' }
+  { label: '一诺洞察', value: 'insight' },
+  { label: '新闻资讯', value: 'news' }
 ]
 
 const bannerCategories = [
