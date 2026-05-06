@@ -122,7 +122,7 @@
                   <tr class="bg-gray-50 text-gray-600 border-b">
                     <th class="p-2 md:p-4 rounded-tl-lg">ID</th>
                     <th class="p-2 md:p-4">图片</th>
-                    <th class="p-2 md:p-4">标题</th>
+                    <th v-if="bannerCategoryFilter === 'home'" class="p-2 md:p-4">标题</th>
                     <th class="p-2 md:p-4 text-center">排序</th>
                     <th class="p-2 md:p-4 text-center">状态</th>
                     <th class="p-2 md:p-4 rounded-tr-lg text-right">操作</th>
@@ -136,7 +136,7 @@
                            @click="openPreview(item.image_url)"
                            class="h-10 w-16 md:h-12 md:w-20 object-cover rounded shadow-sm cursor-zoom-in hover:opacity-80 transition" />
                     </td>
-                    <td class="p-2 md:p-4">
+                    <td v-if="bannerCategoryFilter === 'home'" class="p-2 md:p-4">
                       <div class="flex flex-col text-sm md:text-base">
                         <div class="flex items-center font-medium">
                           <span v-if="isLocked(item, index)" class="mr-1 text-orange-500" title="首页核心位已锁定">🔒</span>
@@ -164,7 +164,7 @@
                     </td>
                   </tr>
                   <tr v-if="filteredBanners.length === 0">
-                    <td colspan="6" class="p-8 text-center text-gray-400">暂无数据</td>
+                    <td :colspan="bannerCategoryFilter === 'home' ? 6 : 5" class="p-8 text-center text-gray-400">暂无数据</td>
                   </tr>
                 </tbody>
               </table>
@@ -197,6 +197,7 @@
                    <th class="p-2 md:p-4">封面</th>
                    <th class="p-2 md:p-4">中文标题</th>
                    <th class="p-2 md:p-4">英文标题</th>
+                   <th class="p-2 md:p-4">发布日期</th>
                    <th class="p-2 md:p-4">状态</th>
                    <th class="p-2 md:p-4 rounded-tr-lg text-right">操作</th>
                  </tr>
@@ -212,6 +213,7 @@
                    </td>
                    <td class="p-2 md:p-4 text-sm max-w-xs truncate">{{ item.title_zh }}</td>
                    <td class="p-2 md:p-4 text-sm max-w-xs truncate">{{ item.title_en }}</td>
+                   <td class="p-2 md:p-4 text-sm whitespace-nowrap">{{ item.created_at ? item.created_at.substring(0, 10) : '-' }}</td>
                    <td class="p-2 md:p-4 text-sm">
                      <span :class="item.is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'" class="px-2 py-1 rounded text-xs font-medium">
                        {{ item.is_published ? '已发布' : '草稿' }}
@@ -223,7 +225,7 @@
                    </td>
                  </tr>
                  <tr v-if="news.length === 0">
-                   <td colspan="6" class="p-8 text-center text-gray-400">暂无数据</td>
+                   <td colspan="7" class="p-8 text-center text-gray-400">暂无数据</td>
                  </tr>
                </tbody>
              </table>
@@ -393,74 +395,77 @@
                 <img v-if="formData.image_url" :src="formData.image_url" class="mt-2 h-24 object-cover rounded border" />
               </div>
 
-              <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
-                <div class="flex-1 sm:mr-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">主标题 (中文)</label>
-                  <input v-model="formData.title_zh" type="text" 
-                         :placeholder="bannerIndex === 0 ? '（默认：专注资产配置...）' : '输入 Banner 中文主标题...'" 
-                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm font-bold" />
-                </div>
-                <button type="button" @click="autoTranslateBanner" class="sm:mt-5 px-4 py-2 bg-yino-gold/10 text-yino-gold rounded-lg hover:bg-yino-gold/20 transition text-sm font-bold flex items-center justify-center">
-                  <span class="mr-1">✨</span> 翻译内容
-                </button>
-              </div>
-
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">副标题/描述 (中文)</label>
-                <textarea v-model="formData.description_zh" rows="2" 
-                          :placeholder="bannerIndex === 0 ? '（默认：以买方视角为核心...）' : (bannerIndex === 1 ? '（默认：成功案例）' : '输入 Banner 中文副标题...')" 
-                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm"></textarea>
-              </div>
-
-              <!-- Translation Toggle -->
-              <div class="flex items-center space-x-2 py-2 mt-2">
-                <input v-model="showTranslationForm" type="checkbox" id="banner-trans" class="rounded text-yino-blue focus:ring-yino-blue" />
-                <label for="banner-trans" class="text-sm font-medium text-gray-600 cursor-pointer">管理英文翻译 (手动微调)</label>
-              </div>
-
-              <div v-if="showTranslationForm" class="space-y-4 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300 animate-[fadeIn_0.3s_ease-out]">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Main Title (EN)</label>
-                  <input v-model="formData.title_en" type="text" placeholder="Enter Banner English title..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm font-medium" />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Subtitle/Description (EN)</label>
-                  <textarea v-model="formData.description_en" rows="2" placeholder="Enter Banner English subtitle..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm"></textarea>
-                </div>
-              </div>
-
-              <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">跳转设置</label>
-                <!-- Link Type Toggle -->
-                <div class="flex items-center space-x-6 mb-3 p-2 bg-gray-50 rounded-lg max-w-fit">
-                  <label class="flex items-center cursor-pointer group">
-                    <input type="radio" v-model="bannerLinkType" value="custom" class="w-4 h-4 text-yino-blue border-gray-300 focus:ring-yino-blue">
-                    <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">自定义链接</span>
-                  </label>
-                  <label class="flex items-center cursor-pointer group">
-                    <input type="radio" v-model="bannerLinkType" value="news" class="w-4 h-4 text-yino-blue border-gray-300 focus:ring-yino-blue">
-                    <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">链接至新闻</span>
-                  </label>
+              <!-- Only show titles and links for HOME category -->
+              <template v-if="formData.category === 'home'">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
+                  <div class="flex-1 sm:mr-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">主标题 (中文)</label>
+                    <input v-model="formData.title_zh" type="text" 
+                          :placeholder="bannerIndex === 0 ? '（默认：专注资产配置...）' : '输入 Banner 中文主标题...'" 
+                          class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm font-bold" />
+                  </div>
+                  <button type="button" @click="autoTranslateBanner" class="sm:mt-5 px-4 py-2 bg-yino-gold/10 text-yino-gold rounded-lg hover:bg-yino-gold/20 transition text-sm font-bold flex items-center justify-center">
+                    <span class="mr-1">✨</span> 翻译内容
+                  </button>
                 </div>
 
-                <!-- News Selector Dropdown -->
-                <div v-if="bannerLinkType === 'news'" class="space-y-2 animate-[fadeIn_0.3s_ease-out]">
-                  <select v-model="selectedNewsId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none bg-white text-sm">
-                    <option value="" disabled>请选择目标新闻...</option>
-                    <option v-for="n in news" :key="n.id" :value="n.id">
-                      [{{ n.category === 'insight' ? '洞察' : '新闻' }}] {{ n.title_zh }}
-                    </option>
-                  </select>
-                  <p class="text-[10px] text-gray-400 pl-1 italic">
-                    自动填充链接: <span class="text-yino-blue">{{ formData.link || '未选择' }}</span>
-                  </p>
+                <div class="mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">副标题/描述 (中文)</label>
+                  <textarea v-model="formData.description_zh" rows="2" 
+                            :placeholder="bannerIndex === 0 ? '（默认：以买方视角为核心...）' : (bannerIndex === 1 ? '（默认：成功案例）' : '输入 Banner 中文副标题...')" 
+                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm"></textarea>
                 </div>
 
-                <!-- Custom Link Input -->
-                <input v-else v-model="formData.link" type="text" 
-                       placeholder="请输入跳转地址 (如: /about 或 https://...)"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm transition-all" />
-              </div>
+                <!-- Translation Toggle -->
+                <div class="flex items-center space-x-2 py-2 mt-2">
+                  <input v-model="showTranslationForm" type="checkbox" id="banner-trans" class="rounded text-yino-blue focus:ring-yino-blue" />
+                  <label for="banner-trans" class="text-sm font-medium text-gray-600 cursor-pointer">管理英文翻译 (手动微调)</label>
+                </div>
+
+                <div v-if="showTranslationForm" class="space-y-4 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-300 animate-[fadeIn_0.3s_ease-out]">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Main Title (EN)</label>
+                    <input v-model="formData.title_en" type="text" placeholder="Enter Banner English title..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm font-medium" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Subtitle/Description (EN)</label>
+                    <textarea v-model="formData.description_en" rows="2" placeholder="Enter Banner English subtitle..." class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm"></textarea>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">跳转设置</label>
+                  <!-- Link Type Toggle -->
+                  <div class="flex items-center space-x-6 mb-3 p-2 bg-gray-50 rounded-lg max-w-fit">
+                    <label class="flex items-center cursor-pointer group">
+                      <input type="radio" v-model="bannerLinkType" value="custom" class="w-4 h-4 text-yino-blue border-gray-300 focus:ring-yino-blue">
+                      <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">自定义链接</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer group">
+                      <input type="radio" v-model="bannerLinkType" value="news" class="w-4 h-4 text-yino-blue border-gray-300 focus:ring-yino-blue">
+                      <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">链接至新闻</span>
+                    </label>
+                  </div>
+
+                  <!-- News Selector Dropdown -->
+                  <div v-if="bannerLinkType === 'news'" class="space-y-2 animate-[fadeIn_0.3s_ease-out]">
+                    <select v-model="selectedNewsId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none bg-white text-sm">
+                      <option value="" disabled>请选择目标新闻...</option>
+                      <option v-for="n in news" :key="n.id" :value="n.id">
+                        [{{ n.category === 'insight' ? '洞察' : '新闻' }}] {{ n.title_zh }}
+                      </option>
+                    </select>
+                    <p class="text-[10px] text-gray-400 pl-1 italic">
+                      自动填充链接: <span class="text-yino-blue">{{ formData.link || '未选择' }}</span>
+                    </p>
+                  </div>
+
+                  <!-- Custom Link Input -->
+                  <input v-else v-model="formData.link" type="text" 
+                        placeholder="请输入跳转地址 (如: /about 或 https://...)"
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none text-sm transition-all" />
+                </div>
+              </template>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">排序优先级</label>
                 <input v-model.number="formData.sort_order" type="number" class="w-full rounded-md border-gray-300 shadow-sm focus:border-yino-blue focus:ring-yino-blue px-3 py-2 border outline-none" />
