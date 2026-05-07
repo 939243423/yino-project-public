@@ -527,14 +527,23 @@ const slides = computed(() => {
   }]
 })
 
-const apiSlides = ref([])
+const apiSlides = ref(appState.homeBanners || [])
 
 onMounted(async () => {
+  // If we already have cached banners, don't fetch again to avoid "double animation"
+  if (appState.bannersLoaded) {
+    apiSlides.value = appState.homeBanners
+    appState.isInitialLoading = false
+    return
+  }
+
   try {
     const banners = await request.get('/public/banners?category=home')
     if (banners && banners.length > 0) {
       apiSlides.value = banners
+      appState.homeBanners = banners
     }
+    appState.bannersLoaded = true
   } catch (err) {
     console.error('Failed to fetch banners', err)
   } finally {

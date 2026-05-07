@@ -224,7 +224,7 @@
                      <button @click="deleteItem('news', item.id)" class="text-red-600 hover:text-red-800">删除</button>
                    </td>
                  </tr>
-                 <tr v-if="news.length === 0">
+                 <tr v-if="filteredNews.length === 0">
                    <td colspan="7" class="p-8 text-center text-gray-400">暂无数据</td>
                  </tr>
                </tbody>
@@ -1032,6 +1032,7 @@ const autoTranslateBanner = async () => {
     return
   }
   
+  const loading = dialog.loading('正在智能生成英文内容...')
   try {
     const texts = [formData.value.title_zh || '', formData.value.description_zh || '']
     const res = await request.post('/admin/translate', { text: texts, to: 'en' })
@@ -1043,17 +1044,25 @@ const autoTranslateBanner = async () => {
     }
   } catch (err) {
     dialog.toast('翻译失败，请检查网络或重试', 'error')
+  } finally {
+    loading.close()
   }
 }
 
 const autoTranslateNews = async () => {
-  if (!formData.value.title_zh && !formData.value.description_zh && !formData.value.content_zh) {
-    dialog.alert('提示', '请先填写中文内容')
-    return
-  }
-
-  const loading = dialog.loading('正在智能生成英文内容...')
+  const loading = dialog.loading('正在同步并智能生成英文内容...')
   try {
+    // 1. 强制同步编辑器内容并上传 Base64 图片 (防止翻译请求超长)
+    if (editorZh.value) {
+      formData.value.content_zh = await editorZh.value.uploadAndGetContent()
+    }
+
+    if (!formData.value.title_zh && !formData.value.description_zh && !formData.value.content_zh) {
+      loading.close()
+      dialog.alert('提示', '请先填写中文内容')
+      return
+    }
+
     // Collect texts to translate (using array to save API calls)
     const texts = [
       formData.value.title_zh || '',
