@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { dialog } from '../utils/ui';
 
 const request = axios.create({
   baseURL: '/api',
-  timeout: 10000
+  timeout: 30000 // Increased timeout for translation/large uploads
 });
 
 request.interceptors.request.use(config => {
@@ -17,11 +18,21 @@ request.interceptors.request.use(config => {
 
 request.interceptors.response.use(response => {
   return response.data;
-}, error => {
+}, async error => {
   if (error.response) {
-    if (error.response.status === 401) {
+    const status = error.response.status;
+    
+    if (status === 401) {
+      // Clear credentials
       localStorage.removeItem('yino_admin_token');
-    } else if (error.response.status === 413 || (error.response.status === 500 && error.response.data?.message?.includes('File too large'))) {
+      localStorage.removeItem('yino_admin_user');
+      
+      // If we are already on login page, don't show alert again
+      if (!window.location.hash.includes('/admin/login') && !window.location.pathname.includes('/admin/login')) {
+        await dialog.alert('登录过期', '您的登录状态已失效，请重新登录。', { confirmText: '重新登录' });
+        window.location.href = '#/admin/login';
+      }
+    } else if (status === 413 || (status === 500 && error.response.data?.message?.includes('File too large'))) {
       // Handle both 413 and 500 "File too large"
       error.message = '文件过大请压缩再上传';
     }
