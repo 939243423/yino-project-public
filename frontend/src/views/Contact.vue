@@ -131,7 +131,7 @@
         <div class="bg-white border border-gray-100 p-10 rounded-2xl flex flex-col items-center justify-center hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-shadow">
           <img :src="contact6" alt="Talent Recruitment" class="w-16 h-16 mb-4" />
           <div class="text-sm text-gray-500 mb-2">{{ $t('contact.hr') }}</div>
-          <a href="mailto:info@yinoasset.com" class="font-bold text-gray-900 hover:text-[#BCA669] transition text-lg">info@yinoasset.com</a>
+          <a href="mailto:hr@yinoasset.com" class="font-bold text-gray-900 hover:text-[#BCA669] transition text-lg">hr@yinoasset.com</a>
         </div>
       </div>
     </div>

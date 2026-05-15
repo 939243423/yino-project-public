@@ -111,7 +111,7 @@
               </div>
 
               <div class="flex justify-center mt-16 bg-gray-50 py-10 -mx-8 -mb-12">
-                <a href="mailto:info@yinoasset.com" class="px-16 py-4 bg-[#BCA669]/80 text-white rounded font-bold hover:bg-[#BCA669] transition shadow-md hover:shadow-xl hover:-translate-y-0.5 inline-block">
+                <a href="mailto:hr@yinoasset.com" class="px-16 py-4 bg-[#BCA669]/80 text-white rounded font-bold hover:bg-[#BCA669] transition shadow-md hover:shadow-xl hover:-translate-y-0.5 inline-block">
                   {{ $t('join.apply_now') }}
                 </a>
               </div>
